@@ -12,10 +12,6 @@ from tensorforce.environments import Environment
 import random
 import numpy as np
 
-batch_size = 128
-num_classes = 10
-epochs = 12
-
 # input image dimensions
 img_rows, img_cols = 28, 28
 
@@ -47,35 +43,25 @@ indexes_to_use_for_training = random.sample(range(len(x_train)), int(len(x_train
 
 class CustomEnvironment(Environment):
   
-  def __init__(self, config, input_model=None, opt='max'):
+  def __init__(self, config, input_model=None, opt='max', starting_tol=0.8, tol_decay=0.8):
     super().__init__()
     self._hps = HyperparameterSettings(config)
     self._opt = opt # add constraint on input of this
     self._prev_reward = 1e5 if opt == 'max' else -1e5
-    self._tol_decay = 0.8
+
+    self._starting_tol = starting_tol
+    self._tol_decay = tol_decay
     self.curr_train_step = 0
     self.build_model = input_model
 
 
   def states(self):
-    '''state_dict = OrderedDict()
-    for param in self._hps.get_parameter_configs():
-      if param[0] == 'int':
-        number_states = param[1] - param[0] + 1
-        state_dict.add({type=param[0], shape=(1,), num_states=number_states, min_value=param[1], max_value=param[2]})
-      else:
-        state_dict.add({type=param[0], shape=(1,), min_value=param[1], max_value=param[2]})
-
-    state_dict.add({type='float', shape=(1,)}) # monitored metric
-        
-    return state_dict'''
-
     return dict(type='float', shape=(len(self._hps.get_parameter_labels()) + 1,))
 
 
   def actions(self):
     # return dict(type='float', num_actions=int(self._hps.get_num_actions())) #, min_value=-1, max_value=1)
-    return dict(type='float', shape=(2,), min_value=-1.0, max_value=1.0)
+    return dict(type='float', shape=(self._hps.get_num_actions(),), min_value=-1.0, max_value=1.0)
 
   # Optional, should only be defined if environment has a natural maximum
   # episode length
@@ -123,7 +109,7 @@ class CustomEnvironment(Environment):
     next_state = np.append(next_state, reward)
     print('Next state: {}'.format(next_state))
 
-    tol = -0.001 * math.pow(self._tol_decay, self.curr_train_step)
+    tol = self._starting_tol * math.pow(self._tol_decay, self.curr_train_step)
 
     if  self._prev_reward - reward  > tol or reward < -0.5:
       print()
