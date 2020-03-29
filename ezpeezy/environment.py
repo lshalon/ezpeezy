@@ -7,6 +7,7 @@ from tensorflow.keras.layers import Conv2D, MaxPooling2D
 from keras import backend as K
 
 from .hyperparameter import HyperparameterSettings
+from .data import DataManager
 from tensorforce.environments import Environment
 
 import random
@@ -57,6 +58,7 @@ class CustomEnvironment(Environment):
     self.curr_train_step = 0
     self.build_model = input_model
 
+    self._data_manager = DataManager()
 
   def states(self):
     return dict(type='float', shape=(len(self._hps.get_parameter_labels()) + 1,))
@@ -74,6 +76,15 @@ class CustomEnvironment(Environment):
   # Optional
   def close(self):
     super().close()
+
+  def set_k_folds(self, n_folds, pick_random):
+    self._data_manager.set_k_fold(n_folds, pick_random)
+
+  def train_on_data(self, X_train, y_train, X_test, y_test):
+    self.X_train = X_train
+    self.y_train = y_train
+    self.X_test = X_test
+    self.y_test = y_test
 
   def reset(self):
     state = list(self._hps.get_random_parameters().values())
@@ -99,13 +110,18 @@ class CustomEnvironment(Environment):
     print('Building model with {}'.format([(k, '{:0.2f}'.format(parameters[k])) for k in parameters.keys()]))
     self._internal_model = self.build_model(parameters)
     
-    history = self._internal_model.fit(x_train[indexes_to_use_for_training], y_train[indexes_to_use_for_training],
-          batch_size=512,
-          epochs=75,
-          verbose=0,
-          validation_data=(x_test, y_test))
+    each_reward = []
+    for X_train, y_train, X_valid, y_valid in self._data_manager.feed_forward_data(self.X_train, self.y_train, self.X_test, self.y_test):
+      history = self._internal_model.fit(X_train, y_train,
+            batch_size=512,
+            epochs=75,
+            verbose=0,
+            validation_data=(X_valid, y_valid))
+      
+      each_reward.append(-min(history.history['val_loss']) if self._opt == 'min' else max(history.history['val_loss']))
     
-    reward = -min(history.history['val_loss']) if self._opt == 'min' else max(history.history['val_loss'])
+    reward = sum(each_reward) / len(each_reward)
+
     print('Reward: {:0.5f}'.format(reward))
     terminal = False
     next_state = np.array(list(parameters.values()))
