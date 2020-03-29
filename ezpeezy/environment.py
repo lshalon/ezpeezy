@@ -46,7 +46,7 @@ indexes_to_use_for_training = random.sample(range(len(x_train)), int(len(x_train
 
 class CustomEnvironment(Environment):
   
-  def __init__(self, config, input_model=None, opt='max', starting_tol=0.8, tol_decay=0.8):
+  def __init__(self, config, input_model=None, opt='max', starting_tol=0.01, tol_decay=0.8):
     super().__init__()
     self._hps = HyperparameterSettings(config)
     self._opt = opt # add constraint on input of this
@@ -114,7 +114,7 @@ class CustomEnvironment(Environment):
 
     tol = self._starting_tol * math.pow(self._tol_decay, self.curr_train_step)
 
-    if  self._prev_reward - reward  > tol or reward < -0.5:
+    if reward - self._prev_reward < tol or reward < -0.5:
       print()
       print('Terminating episode, prev_reward: {}, curr_reward: {}, tolerance: {:0.5f}'.format(self._prev_reward, reward, tol))
       self._prev_reward = 1e5 if self._opt == 'max' else -1e5
