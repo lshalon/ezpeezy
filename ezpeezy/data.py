@@ -4,6 +4,7 @@ class DataManager():
   
   def __init__(self):
     self.n_folds = None
+    self._fold_seed = None
   
   def set_k_fold(self, n_folds, pick_random):
     self.n_folds = n_folds
