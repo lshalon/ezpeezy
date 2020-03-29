@@ -102,7 +102,7 @@ class CustomEnvironment(Environment):
     history = self._internal_model.fit(x_train[indexes_to_use_for_training], y_train[indexes_to_use_for_training],
           batch_size=512,
           epochs=75,
-          verbose=1,
+          verbose=0,
           validation_data=(x_test, y_test))
     
     reward = -min(history.history['val_loss']) if self._opt == 'min' else max(history.history['val_loss'])
