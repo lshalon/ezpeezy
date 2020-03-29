@@ -19,8 +19,8 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     install_requires=[
-        'pandas~=0.22.0',
-        'numpy==1.14.1',
+        'pandas',
+        'numpy',
         'tensorforce',
     ],
     python_requires='>=3.5',

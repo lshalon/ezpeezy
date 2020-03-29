@@ -10,6 +10,7 @@ from .hyperparameter import HyperparameterSettings
 from tensorforce.environments import Environment
 
 import random
+import numpy as np
 
 batch_size = 128
 num_classes = 10
