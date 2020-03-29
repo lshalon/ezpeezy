@@ -11,6 +11,7 @@ from tensorforce.environments import Environment
 
 import random
 import numpy as np
+import math
 
 num_classes = 10
 
