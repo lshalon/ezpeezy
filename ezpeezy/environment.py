@@ -54,28 +54,7 @@ class CustomEnvironment(Environment):
     self._prev_reward = 1e5 if opt == 'max' else -1e5
     self._tol_decay = 0.8
     self.curr_train_step = 0
-
-  def build_model(self, custom_parameters):
-    model = Sequential()
-    model.add(Conv2D(32, kernel_size=(3, 3),
-                    activation='relu',
-                    input_shape=input_shape))
-    model.add(Conv2D(64, (3, 3), activation='relu'))
-
-    max_pool_size = custom_parameters['max_pool_size']
-
-    model.add(MaxPooling2D(pool_size=(max_pool_size, max_pool_size)))
-    model.add(Dropout(custom_parameters['dropout_rate']))
-    model.add(Flatten())
-    model.add(Dense(128, activation='relu'))
-    model.add(Dropout(0.25))
-    model.add(Dense(num_classes, activation='softmax'))
-
-    model.compile(loss=keras.losses.categorical_crossentropy,
-                  optimizer=tf.keras.optimizers.Adam(),
-                  metrics=['accuracy'])
-    
-    return model
+    self.build_model = input_model
 
 
   def states(self):
