@@ -12,6 +12,8 @@ from tensorforce.environments import Environment
 import random
 import numpy as np
 
+num_classes = 10
+
 # input image dimensions
 img_rows, img_cols = 28, 28
 
