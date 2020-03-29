@@ -27,7 +27,7 @@ class DataManager():
             print('Using {} of {} folds for training and validation'.format(len(self.fold_selections), self.n_folds))
         
         fold_counter = 0
-        kfold = KFold(n_folds, random_state=self._fold_seed)
+        kfold = KFold(self.n_folds, random_state=self._fold_seed)
         for X_t, x_v, Y_t, y_v in (kfold.split(X_train), kfold.split(y_train)):
             if fold_counter in self.fold_selections:
                 yield X_t, Y_t, x_v, y_v
