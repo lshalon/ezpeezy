@@ -28,8 +28,8 @@ class DataManager():
         
         fold_counter = 0
         kfold = KFold(self.n_folds, random_state=self._fold_seed)
-        print((kfold.split(X_train), kfold.split(y_train)))
-        for (X_t, x_v), (Y_t, y_v) in (kfold.split(X_train), kfold.split(y_train)):
+        print(elem for elem in (kfold.split(X_train), kfold.split(y_train)))
+        for (X_t, x_v, Y_t, y_v) in (kfold.split(X_train), kfold.split(y_train)):
             if fold_counter in self.fold_selections:
                 yield X_t, Y_t, x_v, y_v
             fold_counter += 1
