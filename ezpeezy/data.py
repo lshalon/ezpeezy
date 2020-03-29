@@ -13,7 +13,7 @@ class DataManager():
     return self.n_folds != None
   
   def feed_forward_data(self, X_train, y_train, X_valid=None, y_valid=None):
-    assert ((X_valid != None) & (y_valid != None)) | self.using_k_fold(), "use your agent's set_k_fold() method to set k_fold or provide validation data"
+    assert ((X_valid != None)) | self.using_k_fold(), "use your agent's set_k_fold() method to set k_fold or provide validation data"
     if self._fold_seed == None:
         self._fold_seed = int(np.random() * 1e3)
 
