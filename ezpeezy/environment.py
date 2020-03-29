@@ -112,7 +112,7 @@ class CustomEnvironment(Environment):
     next_state = np.append(next_state, reward)
     print('Next state: {}'.format(next_state))
 
-    tol = self._starting_tol * math.pow(self._tol_decay, self.curr_train_step)
+    tol = self._starting_tol * self._tol_decay * self.curr_train_step
 
     if reward - self._prev_reward < tol or reward < -0.5:
       print()
