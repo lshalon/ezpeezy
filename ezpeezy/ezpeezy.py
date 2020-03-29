@@ -3,7 +3,7 @@ from tensorforce.agents import DeepQNetwork
 from .environment import CustomEnvironment
 
 class Ezpeezy():
-    def __init__(self, config, model_fn, opt='max', starting_tol=0.01, tol_decay=0.8):
+    def __init__(self, config, model_fn, opt='max', starting_tol=0.01, tol_decay=0.5):
         env = CustomEnvironment(config, input_model=model_fn, opt=opt, 
                                 starting_tol=starting_tol, tol_decay=tol_decay)
         agent = DeepQNetwork(states=env.states(), actions=env.actions(),
