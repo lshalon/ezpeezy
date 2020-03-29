@@ -101,7 +101,7 @@ class CustomEnvironment(Environment):
     history = self._internal_model.fit(x_train[indexes_to_use_for_training], y_train[indexes_to_use_for_training],
           batch_size=512,
           epochs=75,
-          verbose=0,
+          verbose=1,
           validation_data=(x_test, y_test))
     
     reward = -history.history['val_loss'][-1]
