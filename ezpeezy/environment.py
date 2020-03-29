@@ -105,7 +105,7 @@ class CustomEnvironment(Environment):
           verbose=1,
           validation_data=(x_test, y_test))
     
-    reward = -history.history['val_loss'][-1]
+    reward = -min(history.history['val_loss']) if self._opt == 'min' else max(history.history['val_loss'])
     print('Reward: {:0.5f}'.format(reward))
     terminal = False
     next_state = np.array(list(parameters.values()))
