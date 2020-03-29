@@ -10,7 +10,7 @@ class DataManager():
   
   def set_k_fold(self, n_folds, pick_random):
     self.n_folds = n_folds
-    self.fold_selections = random.sample(np.arange(n_folds), pick_random if pick_random != None else n_folds)
+    self.fold_selections = random.sample(range(n_folds), pick_random if pick_random != None else n_folds)
 
   def using_k_fold(self):
     return self.n_folds != None
