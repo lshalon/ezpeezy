@@ -3,13 +3,19 @@ from tensorforce.agents import DeepQNetwork
 from .environment import CustomEnvironment
 
 class Ezpeezy():
-    def __init__(self, config, model_fn, opt_metric='val_loss', opt='max', starting_tol=0.01, tol_decay=0.5):
-        self._env = CustomEnvironment(config, input_model=model_fn, opt_metric=opt_metric, opt=opt, 
-                                starting_tol=starting_tol, tol_decay=tol_decay)
+    def __init__(self, config, model_fn, model_train_batch_size=256, 
+                model_train_epoch=75, exploration=0.9, 
+                exploration_decay_rate=0.8, opt_metric='val_loss', 
+                opt='max', starting_tol=0.01, tol_decay=0.5):
+
+        self._env = CustomEnvironment(config, model_train_epoch=model_train_epoch,
+                                    model_train_batch_size=model_train_batch_size, 
+                                    input_model=model_fn, opt_metric=opt_metric, opt=opt, 
+                                    starting_tol=starting_tol, tol_decay=tol_decay)
         self._agent = DeepQNetwork(states=self._env.states(), actions=self._env.actions(),
                      max_episode_timesteps=self._env.max_episode_timesteps(),
                      memory=60, batch_size=1, exploration=dict(type='decaying', unit='timesteps', decay='exponential',
-                                                            initial_value=0.9, decay_steps=1000, decay_rate=0.8)
+                                                            initial_value=exploration, decay_steps=100, decay_rate=exploration_decay_rate)
                      )
 
         self.runner = Runner(agent=self._agent, environment=self._env)

@@ -13,7 +13,8 @@ import math
 
 class CustomEnvironment(Environment):
   
-  def __init__(self, config, starting_tol, tol_decay, input_model, opt_metric, opt):
+  def __init__(self, config, starting_tol, tol_decay, input_model, opt_metric, opt, 
+              model_train_batch_size, model_train_epoch):
     super().__init__()
     self._hps = HyperparameterSettings(config)
     self._opt = opt # add constraint on input of this
@@ -23,6 +24,9 @@ class CustomEnvironment(Environment):
     self._starting_tol = starting_tol
     self._tol_decay = tol_decay
     self.curr_train_step = 0
+
+    self._model_train_batch_size = model_train_batch_size
+    self._model_train_epoch = model_train_epoch
     self.build_model = input_model
 
     self._data_manager = DataManager()
@@ -80,9 +84,9 @@ class CustomEnvironment(Environment):
     each_reward = []
     for X_train, y_train, X_valid, y_valid in self._data_manager.feed_forward_data(self.X_train, self.y_train, self.X_test, self.y_test):
       history = self._internal_model.fit(X_train, y_train,
-            batch_size=512,
-            epochs=75,
-            verbose=1,
+            batch_size=self._model_train_batch_size,
+            epochs=self._model_train_epoch,
+            verbose=0,
             validation_data=(X_valid, y_valid))
       
       each_reward.append(-min(history.history[self._opt_metric]) if self._opt == 'min' else max(history.history['val_loss']))
