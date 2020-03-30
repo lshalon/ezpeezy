@@ -13,10 +13,11 @@ import math
 
 class CustomEnvironment(Environment):
   
-  def __init__(self, config, starting_tol, tol_decay, input_model=None, opt='max'):
+  def __init__(self, config, starting_tol, tol_decay, input_model, opt_metric, opt):
     super().__init__()
     self._hps = HyperparameterSettings(config)
     self._opt = opt # add constraint on input of this
+    self._opt_metric = opt_metric
     self._prev_reward = 1e5 if opt == 'max' else -1e5
 
     self._starting_tol = starting_tol
@@ -84,7 +85,7 @@ class CustomEnvironment(Environment):
             verbose=1,
             validation_data=(X_valid, y_valid))
       
-      each_reward.append(-min(history.history['val_loss']) if self._opt == 'min' else max(history.history['val_loss']))
+      each_reward.append(-min(history.history[self._opt_metric]) if self._opt == 'min' else max(history.history['val_loss']))
     
     reward = sum(each_reward) / len(each_reward)
 
@@ -96,7 +97,7 @@ class CustomEnvironment(Environment):
 
     tol = self._starting_tol * self._tol_decay * self.curr_train_step
 
-    if reward - self._prev_reward < tol or reward < -0.5:
+    if reward - self._prev_reward < tol:
       print()
       print('Terminating episode, prev_reward: {}, curr_reward: {}, tolerance: {:0.5f}'.format(self._prev_reward, reward, tol))
       self._prev_reward = 1e5 if self._opt == 'max' else -1e5
