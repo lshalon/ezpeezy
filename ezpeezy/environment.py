@@ -20,7 +20,7 @@ class CustomEnvironment(Environment):
     super().__init__()
     self._hps = HyperparameterSettings(config)
     self._opt = opt # add constraint on input of this
-    self._opt_metric = opt_metric
+    self._monitor_metric = opt_metric
     self._prev_reward = 1e5 if opt == 'max' else -1e5
 
     self._starting_tol = starting_tol
@@ -28,7 +28,7 @@ class CustomEnvironment(Environment):
 
     self.curr_train_step = 0
     self.curr_episode = -1
-    self.history = pd.DataFrame(columns=['episode'] + self._hps.get_parameter_labels() + ['monitor_metric'])
+    self.history = pd.DataFrame(columns=['episode'] + self._hps.get_parameter_labels() + [self._monitor_metric])
 
     self._model_train_batch_size = model_train_batch_size
     self._model_train_epoch = model_train_epoch
@@ -65,7 +65,7 @@ class CustomEnvironment(Environment):
   def reset(self):
     # plotting
     if self.curr_episode >= 0:
-      Visualizer.plot_history(self.history, self._max_num_episodes, self._opt_metric)
+      Visualizer.plot_history(self.history, self._max_num_episodes, self._monitor_metric)
     
     state = list(self._hps.get_random_parameters().values())
     state += [self._prev_reward]
@@ -99,13 +99,13 @@ class CustomEnvironment(Environment):
             verbose=0,
             validation_data=(X_valid, y_valid))
       
-      each_metric.append(min(history.history[self._opt_metric]) if self._opt == 'min' else max(history.history[self._opt_metric]))
+      each_metric.append(min(history.history[self._monitor_metric]) if self._opt == 'min' else max(history.history[self._monitor_metric]))
     
     average_metric = sum(each_metric) / len(each_metric)
     reward = average_metric if self._opt == 'max' else -average_metric
   
     self.history.loc[len(self.history)] = [self.curr_episode] + list(parameters.values()) + [average_metric]
-    
+
     print('Reward: {:0.5f}'.format(reward))
     terminal = False
     next_state = np.array(list(parameters.values()))
