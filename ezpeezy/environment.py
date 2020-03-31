@@ -4,12 +4,14 @@ from keras import backend as K
 
 from .hyperparameter import HyperparameterSettings
 from .data import DataManager
+from .visualization import Visualizer
 
 from tensorforce.environments import Environment
 
 import random
 import numpy as np
 import math
+import pandas as pd
 
 class CustomEnvironment(Environment):
   
@@ -23,7 +25,10 @@ class CustomEnvironment(Environment):
 
     self._starting_tol = starting_tol
     self._tol_decay = tol_decay
+
     self.curr_train_step = 0
+    self.curr_episode = -1
+    self.history = pd.DataFrame(columns=['episode'] + self._hps.get_parameter_labels() + ['reward'])
 
     self._model_train_batch_size = model_train_batch_size
     self._model_train_epoch = model_train_epoch
@@ -58,11 +63,16 @@ class CustomEnvironment(Environment):
     self.y_test = y_test
 
   def reset(self):
+    # plotting
+    if self.curr_episode >= 0:
+      Visualizer.plot_history(self.history, self._max_num_episodes)
+    
     state = list(self._hps.get_random_parameters().values())
     state += [self._prev_reward]
     state = np.array(state)
     self._prev_state = state
     self.curr_train_step = 0
+    self.curr_episode += 1
     return state
 
   def execute(self, actions):
@@ -92,6 +102,8 @@ class CustomEnvironment(Environment):
       each_reward.append(-min(history.history[self._opt_metric]) if self._opt == 'min' else max(history.history['val_loss']))
     
     reward = sum(each_reward) / len(each_reward)
+    
+    self.history.iloc[-1] = [self.curr_episode] + next_state + [reward]
 
     print('Reward: {:0.5f}'.format(reward))
     terminal = False
@@ -112,3 +124,12 @@ class CustomEnvironment(Environment):
     self.curr_train_step += 1
     self._prev_state = next_state
     return next_state, terminal, reward
+
+  def get_history(self):
+    return self.history
+
+  def reset_history(self):
+    self.history = self.history.iloc[0:0]
+
+  def set_num_episodes(self, num_episodes):
+    self._max_num_episodes = num_episodes

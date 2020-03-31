@@ -27,5 +27,7 @@ class Ezpeezy():
         self._env.train_on_data(X_train, y_train, X_valid, y_valid)
 
     def run(self, num_episodes):
+        self._env.reset_history()
         self.runner.run(num_episodes=num_episodes)
+        print(self._env.get_history())
         self.runner.close()
