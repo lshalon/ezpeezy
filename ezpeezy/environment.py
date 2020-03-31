@@ -28,6 +28,7 @@ class CustomEnvironment(Environment):
 
     self.curr_train_step = 0
     self.curr_episode = -1
+    print(self._hps.get_parameter_labels())
     self.history = pd.DataFrame(columns=['episode'] + self._hps.get_parameter_labels() + ['reward'])
 
     self._model_train_batch_size = model_train_batch_size
