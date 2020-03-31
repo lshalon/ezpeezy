@@ -6,7 +6,7 @@ from collections import OrderedDict
 class HyperparameterSettings():
 
   def __init__(self, parameters):
-    self.parameter_labels = parameters.keys()
+    self.parameter_labels = list(parameters.keys())
     self.parameter_configs = list()
     self.num_params = len(self.parameter_labels)
 
