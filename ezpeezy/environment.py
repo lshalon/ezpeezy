@@ -104,7 +104,8 @@ class CustomEnvironment(Environment):
     reward = average_metric if self._opt == 'max' else -average_metric
   
     self.history.loc[len(self.history)] = [self.curr_episode] + list(parameters.values()) + [average_metric]
-
+    
+    print()
     print('Model with {} achieves {} of {:.5f}'.format([(k, '{:0.2f}'.format(parameters[k])) for k in parameters.keys()], 
                                                         self._monitor_metric, average_metric))
 
