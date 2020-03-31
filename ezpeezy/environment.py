@@ -103,7 +103,7 @@ class CustomEnvironment(Environment):
     
     reward = sum(each_reward) / len(each_reward)
     
-    row_values = [self.curr_episode] + next_state + [reward]
+    row_values = [self.curr_episode] + list(next_state) + [reward]
     print(row_values)
     print(self.history.columns)
 
