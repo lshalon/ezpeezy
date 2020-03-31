@@ -111,7 +111,7 @@ class CustomEnvironment(Environment):
     next_state = np.array(list(parameters.values()))
     next_state = np.append(next_state, reward)
 
-    tol = self._starting_tol * self._tol_decay * self.curr_train_step
+    tol = self._starting_tol * math.pow(self._tol_decay, self.curr_train_step)
 
     print('reward increase: {}'.format(reward - self._prev_reward))
     print('tolerance: {}'.format(tol))
