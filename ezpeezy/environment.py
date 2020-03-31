@@ -28,7 +28,7 @@ class CustomEnvironment(Environment):
 
     self.curr_train_step = 0
     self.curr_episode = -1
-    self.history = pd.DataFrame(columns=['episode'] + self._hps.get_parameter_labels() + ['reward'])
+    self.history = pd.DataFrame(columns=['episode'] + self._hps.get_parameter_labels() + ['monitor_metric'])
 
     self._model_train_batch_size = model_train_batch_size
     self._model_train_epoch = model_train_epoch
@@ -91,7 +91,7 @@ class CustomEnvironment(Environment):
     print('Building model with {}'.format([(k, '{:0.2f}'.format(parameters[k])) for k in parameters.keys()]))
     self._internal_model = self.build_model(parameters)
     
-    each_reward = []
+    each_metric = []
     for X_train, y_train, X_valid, y_valid in self._data_manager.feed_forward_data(self.X_train, self.y_train, self.X_test, self.y_test):
       history = self._internal_model.fit(X_train, y_train,
             batch_size=self._model_train_batch_size,
@@ -99,12 +99,13 @@ class CustomEnvironment(Environment):
             verbose=0,
             validation_data=(X_valid, y_valid))
       
-      each_reward.append(-min(history.history[self._opt_metric]) if self._opt == 'min' else max(history.history['val_loss']))
+      each_metric.append(min(history.history[self._opt_metric]) if self._opt == 'min' else max(history.history[self._opt_metric]))
     
-    reward = sum(each_reward) / len(each_reward)
+    average_metric = sum(each_metric) / len(each_metric)
+    reward = average_metric if self._opt == 'max' else -average_metric
   
-    self.history.loc[len(self.history)] = [self.curr_episode] + list(parameters.values()) + [reward]
-
+    self.history.loc[len(self.history)] = [self.curr_episode] + list(parameters.values()) + [average_metric]
+    
     print('Reward: {:0.5f}'.format(reward))
     terminal = False
     next_state = np.array(list(parameters.values()))
