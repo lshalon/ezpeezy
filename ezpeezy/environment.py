@@ -28,7 +28,6 @@ class CustomEnvironment(Environment):
 
     self.curr_train_step = 0
     self.curr_episode = -1
-    print(self._hps.get_parameter_labels())
     self.history = pd.DataFrame(columns=['episode'] + self._hps.get_parameter_labels() + ['reward'])
 
     self._model_train_batch_size = model_train_batch_size
@@ -66,7 +65,7 @@ class CustomEnvironment(Environment):
   def reset(self):
     # plotting
     if self.curr_episode >= 0:
-      Visualizer.plot_history(self.history, self._max_num_episodes)
+      Visualizer.plot_history(self.history, self._max_num_episodes, self._opt_metric)
     
     state = list(self._hps.get_random_parameters().values())
     state += [self._prev_reward]
@@ -104,7 +103,7 @@ class CustomEnvironment(Environment):
     
     reward = sum(each_reward) / len(each_reward)
     
-    self.history.iloc[-1] = [self.curr_episode] + next_state + [reward]
+    self.history.iloc[len(self.history)] = [self.curr_episode] + next_state + [reward]
 
     print('Reward: {:0.5f}'.format(reward))
     terminal = False

@@ -6,7 +6,7 @@ from collections import OrderedDict
 class HyperparameterSettings():
 
   def __init__(self, parameters):
-    self.parameter_labels = parameters.keys()
+    self.parameter_labels = list(parameters.keys())
     self.parameter_configs = list()
     self.num_params = len(self.parameter_labels)
 
@@ -48,7 +48,7 @@ class HyperparameterSettings():
     return self.parameter_configs
 
   def get_parameter_labels(self):
-    return list(self.parameter_labels) 
+    return self.parameter_labels
 
   def get_feature_dictionary(self, proposed_values):
     return OrderedDict(zip(self.parameter_labels, [self._get_value(proposed_values[i], self.parameter_configs[i]) for i in range(self.num_params)]))
