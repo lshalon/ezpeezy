@@ -76,8 +76,6 @@ class CustomEnvironment(Environment):
     return state
 
   def execute(self, actions):
-    print()
-    print('Executing the following actions: {}'.format(actions))
     assert 0 <= len(actions) <= self._hps.get_num_actions()
 
     param_configs = self._hps.get_parameter_configs()
@@ -88,7 +86,6 @@ class CustomEnvironment(Environment):
     next_state = self._prev_state[:-1] + delta
     parameters = self._hps.get_feature_dictionary(next_state)
 
-    print('Building model with {}'.format([(k, '{:0.2f}'.format(parameters[k])) for k in parameters.keys()]))
     self._internal_model = self.build_model(parameters)
     
     each_metric = []
@@ -106,17 +103,18 @@ class CustomEnvironment(Environment):
   
     self.history.loc[len(self.history)] = [self.curr_episode] + list(parameters.values()) + [average_metric]
 
-    print('Reward: {:0.5f}'.format(reward))
+    print('Model with {} achieves {} of {:.5f}'.format([(k, '{:0.2f}'.format(parameters[k])) for k in parameters.keys()], 
+                                                        self._monitor_metric, average_metric))
+
     terminal = False
     next_state = np.array(list(parameters.values()))
     next_state = np.append(next_state, reward)
-    print('Next state: {}'.format(next_state))
 
     tol = self._starting_tol * self._tol_decay * self.curr_train_step
 
     if reward - self._prev_reward < tol:
       print()
-      print('Terminating episode, prev_reward: {}, curr_reward: {}, tolerance: {:0.5f}'.format(self._prev_reward, reward, tol))
+      print('Terminating episode, prev_reward: {:0.5f}, curr_reward: {:0.5f}, tolerance: {:0.5f}'.format(self._prev_reward, reward, tol))
       self._prev_reward = 1e5 if self._opt == 'max' else -1e5
       terminal = True
     else:
