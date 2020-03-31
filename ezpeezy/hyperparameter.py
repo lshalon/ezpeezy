@@ -39,10 +39,10 @@ class HyperparameterSettings():
 
   def _get_value(self, value, parameter_tuple):
     if value <= parameter_tuple[1]:
-      return parameter_tuple[1] if parameter_tuple[0] == 'float' else round(parameter_tuple[1]) 
+      return parameter_tuple[1] if parameter_tuple[0] == 'float' else int(round(parameter_tuple[1])) 
     if value >= parameter_tuple[2]:
-      return parameter_tuple[2] if parameter_tuple[0] == 'float' else round(parameter_tuple[2])
-    return value if parameter_tuple[0] == 'float' else round(value)
+      return parameter_tuple[2] if parameter_tuple[0] == 'float' else int(round(parameter_tuple[2]))
+    return value if parameter_tuple[0] == 'float' else int(round(value))
 
   def get_parameter_configs(self):
     return self.parameter_configs
