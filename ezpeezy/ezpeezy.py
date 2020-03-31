@@ -8,7 +8,7 @@ class Ezpeezy():
                 exploration_decay_rate=0.8, opt_metric='val_loss', 
                 opt='max', starting_tol=-0.01, tol_decay=0.5):
 
-        self._env = CustomEnvironment(config, model_train_epoch=model_train_epoch,
+        self._env = CustomEnvironment(config, model_train_epoch=model_train_epochs,
                                     model_train_batch_size=model_train_batch_size, 
                                     input_model=model_fn, opt_metric=opt_metric, opt=opt, 
                                     starting_tol=starting_tol, tol_decay=tol_decay)
