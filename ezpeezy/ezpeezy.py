@@ -28,6 +28,7 @@ class Ezpeezy():
 
     def run(self, num_episodes):
         self._env.reset_history()
+        self._env.set_num_episodes(num_episodes)
         self.runner.run(num_episodes=num_episodes)
         print(self._env.get_history())
         self.runner.close()
