@@ -103,7 +103,7 @@ class CustomEnvironment(Environment):
     
     reward = sum(each_reward) / len(each_reward)
     
-    self.history.iloc[len(self.history)] = [self.curr_episode] + next_state + [reward]
+    self.history.loc[len(self.history)] = [self.curr_episode] + next_state + [reward]
 
     print('Reward: {:0.5f}'.format(reward))
     terminal = False
