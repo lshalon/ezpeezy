@@ -136,5 +136,5 @@ class CustomEnvironment(Environment):
 
   def get_best_params(self):
     if self._opt == 'min':
-      return self.history.loc[history[self._monitor_metric].idxmin()]
-    return self.history.loc[history[self._monitor_metric].idxmax()] 
+      return self.history.loc[self.history[self._monitor_metric].idxmin()]
+    return self.history.loc[self.history[self._monitor_metric].idxmax()] 
