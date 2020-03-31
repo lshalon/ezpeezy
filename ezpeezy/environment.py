@@ -102,12 +102,8 @@ class CustomEnvironment(Environment):
       each_reward.append(-min(history.history[self._opt_metric]) if self._opt == 'min' else max(history.history['val_loss']))
     
     reward = sum(each_reward) / len(each_reward)
-    
-    row_values = [self.curr_episode] + list(next_state) + [reward]
-    print(row_values)
-    print(self.history.columns)
-
-    self.history.loc[len(self.history)] = row_values
+  
+    self.history.loc[len(self.history)] = [self.curr_episode] + list(parameters.values()) + [reward]
 
     print('Reward: {:0.5f}'.format(reward))
     terminal = False
