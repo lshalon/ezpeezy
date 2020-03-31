@@ -26,7 +26,7 @@ class CustomEnvironment(Environment):
     self._starting_tol = starting_tol
     self._tol_decay = tol_decay
 
-    self.curr_train_step = 0
+    self.curr_train_step = 1
     self.curr_episode = -1
     self.history = pd.DataFrame(columns=['episode'] + self._hps.get_parameter_labels() + [self._monitor_metric])
 
@@ -112,7 +112,7 @@ class CustomEnvironment(Environment):
 
     tol = self._starting_tol * self._tol_decay * self.curr_train_step
 
-    if reward - self._prev_reward > tol:
+    if reward - self._prev_reward < tol:
       print()
       print('Terminating episode, prev_reward: {:0.5f}, curr_reward: {:0.5f}, tolerance: {:0.5f}'.format(self._prev_reward, reward, tol))
       self._prev_reward = 1e5 if self._opt == 'max' else -1e5
