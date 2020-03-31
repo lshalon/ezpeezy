@@ -10,3 +10,5 @@ class Visualizer():
             plt.plot(episode_subset.index, episode_subset['reward'], 
                     color=color_variations[int(episode) % len(color_variations)])
         plt.ylabel(y_label)
+        plt.xlabel('absolute time steps')
+        plt.show()
