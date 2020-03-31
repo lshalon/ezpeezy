@@ -112,7 +112,7 @@ class CustomEnvironment(Environment):
 
     tol = self._starting_tol * self._tol_decay * self.curr_train_step
 
-    if reward - self._prev_reward < tol:
+    if reward - self._prev_reward > tol:
       print()
       print('Terminating episode, prev_reward: {:0.5f}, curr_reward: {:0.5f}, tolerance: {:0.5f}'.format(self._prev_reward, reward, tol))
       self._prev_reward = 1e5 if self._opt == 'max' else -1e5
