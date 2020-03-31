@@ -114,7 +114,7 @@ class CustomEnvironment(Environment):
 
     if reward - self._prev_reward < tol:
       print()
-      print('Terminating episode, prev_reward: {:0.5f}, curr_reward: {:0.5f}, tolerance: {:0.5f}'.format(self._prev_reward, reward, tol))
+      print('Terminating episode, metric did not beat tolerance of {:0.5f}'.format(tol))
       self._prev_reward = 1e5 if self._opt == 'max' else -1e5
       terminal = True
     else:
