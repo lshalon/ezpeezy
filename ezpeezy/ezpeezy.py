@@ -4,9 +4,9 @@ from .environment import CustomEnvironment
 
 class Ezpeezy():
     def __init__(self, config, model_fn, model_train_batch_size=256, 
-                model_train_epoch=75, exploration=0.9, 
+                model_train_epochs=75, exploration=0.9, 
                 exploration_decay_rate=0.8, opt_metric='val_loss', 
-                opt='max', starting_tol=0.01, tol_decay=0.5):
+                opt='max', starting_tol=-0.01, tol_decay=0.5):
 
         self._env = CustomEnvironment(config, model_train_epoch=model_train_epoch,
                                     model_train_batch_size=model_train_batch_size, 
@@ -26,9 +26,13 @@ class Ezpeezy():
     def train_on_data(self, X_train, y_train, X_valid=None, y_valid=None):
         self._env.train_on_data(X_train, y_train, X_valid, y_valid)
 
+    def get_history(self):
+        return self._env.get_history()
+
     def run(self, num_episodes):
         self._env.reset_history()
         self._env.set_num_episodes(num_episodes)
         self.runner.run(num_episodes=num_episodes)
-        print(self._env.get_history())
+        print('Best parameters are:')
+        print(self._env.get_best_params())
         self.runner.close()

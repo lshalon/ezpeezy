@@ -132,3 +132,8 @@ class CustomEnvironment(Environment):
 
   def set_num_episodes(self, num_episodes):
     self._max_num_episodes = num_episodes
+
+  def get_best_params(self):
+    if self._opt == 'min':
+      return self.history.loc[history[self._monitor_metric].idxmin()]
+    return self.history.loc[history[self._monitor_metric].idxmax()] 
