@@ -113,6 +113,7 @@ class CustomEnvironment(Environment):
 
     tol = self._starting_tol * self._tol_decay * self.curr_train_step
 
+    print('reward increase: {}'.format(reward - self._prev_reward))
     if reward - self._prev_reward < tol:
       print()
       print('Terminating episode, metric did not beat tolerance of {:0.5f}'.format(tol))
