@@ -7,7 +7,7 @@ class Visualizer():
         color_variations = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
         for episode in history['episode'].unique():
             episode_subset = history.loc[history['episode'] == episode]
-            plt.plot(episode_subset.index, episode_subset['reward'], 
+            plt.plot(episode_subset.index, episode_subset[y_label], 
                     color=color_variations[int(episode) % len(color_variations)])
         plt.ylabel(y_label)
         plt.xlabel('absolute time steps')
