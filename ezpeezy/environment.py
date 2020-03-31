@@ -86,7 +86,6 @@ class CustomEnvironment(Environment):
     next_state = self._prev_state[:-1] + delta
     parameters = self._hps.get_feature_dictionary(next_state)
 
-    print(parameters)
     self._internal_model = self.build_model(parameters)
     
     each_metric = []
