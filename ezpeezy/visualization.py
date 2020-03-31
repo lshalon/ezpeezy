@@ -10,5 +10,6 @@ class Visualizer():
             plt.plot(episode_subset.index, episode_subset[y_label], 
                     color=color_variations[int(episode) % len(color_variations)])
         plt.ylabel(y_label)
-        plt.xlabel('absolute time steps')
+        plt.xlabel('absolute_time_steps')
+        plt.xticks(range(len(history)))
         plt.show()
