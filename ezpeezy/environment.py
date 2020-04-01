@@ -22,7 +22,7 @@ class CustomEnvironment(Environment):
     assert isinstance(starting_tol, float), "parameter \"{}\" must be a float".format(starting_tol)
     assert isinstance(tol_decay, float), "parameter \"{}\" must be a float".format(tol_decay)
     assert isinstance(model_train_batch_size, int), "parameter \"{}\" must be an int".format(model_train_batch_size)
-    assert isinstance(model_train_epoch, float), "parameter \"{}\" must be an int".format(model_train_epoch)
+    assert isinstance(model_train_epoch, int), "parameter \"{}\" must be an int".format(model_train_epoch)
 
     self._hps = HyperparameterSettings(config)
     self._opt = opt # add constraint on input of this
@@ -45,19 +45,13 @@ class CustomEnvironment(Environment):
   def states(self):
     return dict(type='float', shape=(len(self._hps.get_parameter_labels()) + 1,))
 
-
   def actions(self):
-    # return dict(type='float', num_actions=int(self._hps.get_num_actions())) #, min_value=-1, max_value=1)
     return dict(type='float', shape=(self._hps.get_num_actions(),), min_value=-1.0, max_value=1.0)
 
   # Optional, should only be defined if environment has a natural maximum
   # episode length
   def max_episode_timesteps(self):
     return 50
-
-  # Optional
-  def close(self):
-    super().close()
 
   def set_k_folds(self, n_folds, pick_random):
     self._data_manager.set_k_fold(n_folds, pick_random)
@@ -76,9 +70,11 @@ class CustomEnvironment(Environment):
     state = list(self._hps.get_random_parameters().values())
     state += [self._prev_reward]
     state = np.array(state)
+
     self._prev_state = state
     self.curr_train_step = 0
     self.curr_episode += 1
+
     return state
 
   def execute(self, actions):
