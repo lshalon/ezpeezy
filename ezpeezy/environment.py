@@ -77,6 +77,18 @@ class CustomEnvironment(Environment):
 
     return state
 
+  def _get_cached_results(self, parameters):
+    results = self.history.copy()
+    for (key, value) in parameters.items():
+      print(results)
+      results = results.loc[results[key] == value]
+      if len(results) == 0:
+        return False
+
+    print('history')
+    print(self.history)
+    return results[self._monitor_metric][0]
+
   def execute(self, actions):
     assert 0 <= len(actions) <= self._hps.get_num_actions()
 
@@ -91,12 +103,17 @@ class CustomEnvironment(Environment):
     self._internal_model = self.build_model(parameters)
     
     each_metric = []
-    for X_train, y_train, X_valid, y_valid in self._data_manager.feed_forward_data(self.X_train, self.y_train, self.X_test, self.y_test):
-      history = self._internal_model.fit(X_train, y_train,
-            batch_size=self._model_train_batch_size,
-            epochs=self._model_train_epoch,
-            verbose=0,
-            validation_data=(X_valid, y_valid))
+    cached_results = self._get_cached_results(parameters)
+
+    if cached_results != False:
+      each_metric.append(cached_results)
+    else:
+      for X_train, y_train, X_valid, y_valid in self._data_manager.feed_forward_data(self.X_train, self.y_train, self.X_test, self.y_test):
+        history = self._internal_model.fit(X_train, y_train,
+              batch_size=self._model_train_batch_size,
+              epochs=self._model_train_epoch,
+              verbose=0,
+              validation_data=(X_valid, y_valid))
       
       each_metric.append(min(history.history[self._monitor_metric]) if self._opt == 'min' else max(history.history[self._monitor_metric]))
     
