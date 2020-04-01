@@ -80,13 +80,10 @@ class CustomEnvironment(Environment):
   def _get_cached_results(self, parameters):
     results = self.history.copy()
     for (key, value) in parameters.items():
-      print(results)
       results = results.loc[results[key] == value]
       if len(results) == 0:
         return False
 
-    print('history')
-    print(self.history)
     print(results[self._monitor_metric])
     return results[self._monitor_metric]
 
