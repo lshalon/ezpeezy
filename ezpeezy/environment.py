@@ -87,7 +87,8 @@ class CustomEnvironment(Environment):
 
     print('history')
     print(self.history)
-    return results[self._monitor_metric][0]
+    print(results[self._monitor_metric])
+    return results[self._monitor_metric]
 
   def execute(self, actions):
     assert 0 <= len(actions) <= self._hps.get_num_actions()
