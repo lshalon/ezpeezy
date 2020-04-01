@@ -84,8 +84,8 @@ class CustomEnvironment(Environment):
       if len(results) == 0:
         return False
 
-    print(results[self._monitor_metric])
-    return results[self._monitor_metric]
+    print('Using cached result for {}'.format([(k, '{:0.2f}'.format(parameters[k])) for k in parameters.keys()]))
+    return list(results[self._monitor_metric])[0]
 
   def execute(self, actions):
     assert 0 <= len(actions) <= self._hps.get_num_actions()
