@@ -27,7 +27,7 @@ class CustomEnvironment(Environment):
     self._hps = HyperparameterSettings(config)
     self._opt = opt # add constraint on input of this
     self._monitor_metric = opt_metric
-    self._prev_reward = -100 # should be more dynamic
+    self._prev_reward = 0 # should be more dynamic
 
     self._starting_tol = starting_tol
     self._tol_decay = tol_decay
@@ -115,10 +115,10 @@ class CustomEnvironment(Environment):
 
     tol = self._starting_tol * math.pow(self._tol_decay, self.curr_train_step)
 
-    if reward - self._prev_reward < tol:
+    if (self.curr_train_step != 0) & (reward - self._prev_reward < tol):
       print()
       print('Terminating episode, metric did not beat tolerance of {:0.5f}'.format(tol))
-      self._prev_reward = 1e5 if self._opt == 'max' else -1e5
+      self._prev_reward = 0.5 * reward if self._opt == 'max' else 2 * reward
       terminal = True
     else:
       self._prev_reward = reward
