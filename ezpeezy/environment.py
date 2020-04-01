@@ -18,10 +18,16 @@ class CustomEnvironment(Environment):
   def __init__(self, config, starting_tol, tol_decay, input_model, opt_metric, opt, 
               model_train_batch_size, model_train_epoch):
     super().__init__()
+    assert (opt == 'min') | (opt == 'max'), "opt param must be \'min' or \'max'"
+    assert isinstance(starting_tol, float), "parameter \"{}\" must be a float".format(starting_tol)
+    assert isinstance(tol_decay, float), "parameter \"{}\" must be a float".format(tol_decay)
+    assert isinstance(model_train_batch_size, int), "parameter \"{}\" must be an int".format(model_train_batch_size)
+    assert isinstance(model_train_epoch, float), "parameter \"{}\" must be an int".format(model_train_epoch)
+
     self._hps = HyperparameterSettings(config)
     self._opt = opt # add constraint on input of this
     self._monitor_metric = opt_metric
-    self._prev_reward = 1e5 if opt == 'max' else -1e5
+    self._prev_reward = -100 # should be more dynamic
 
     self._starting_tol = starting_tol
     self._tol_decay = tol_decay
