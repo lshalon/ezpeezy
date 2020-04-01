@@ -82,7 +82,7 @@ class CustomEnvironment(Environment):
     for (key, value) in parameters.items():
       results = results.loc[results[key] == value]
       if len(results) == 0:
-        return False
+        return None
 
     print('Using cached result for {}'.format([(k, '{:0.2f}'.format(parameters[k])) for k in parameters.keys()]))
     return list(results[self._monitor_metric])[0]
@@ -103,7 +103,7 @@ class CustomEnvironment(Environment):
     each_metric = []
     cached_results = self._get_cached_results(parameters)
 
-    if cached_results != False:
+    if type(cached_results) != type(None):
       each_metric.append(cached_results)
     else:
       for X_train, y_train, X_valid, y_valid in self._data_manager.feed_forward_data(self.X_train, self.y_train, self.X_test, self.y_test):
