@@ -82,13 +82,10 @@ class HyperparameterSettings():
 		assert re.search('[a-zA-Z]', param_val) == None, "parameter value \"{}\" is an invalid value".format(param_val)
 
 		low_value = param_val[:param_val.index(':')]
-		ow_value = -1e4 if low_value == '' else float(low_value)
+		low_value = -1e4 if low_value == '' else float(low_value)
     
 		high_value = param_val[param_val.index(':') + 1:]
 		high_value = 1e4 if high_value == '' else float(high_value)
-
-		print('low_value ' + low_value)
-		print('high_value ' + high_value)
 	
 		assert low_value <= high_value, "parameter value \"{}\" is an invalid value".format(param_val)
 
@@ -177,3 +174,5 @@ class HyperparameterSettings():
 		"""
 		random_state = [random.uniform(param[1], param[2]) for param in self.parameter_configs]
 		return self.get_feature_dictionary(random_state)
+
+test = HyperparameterSettings({'kern_size': 'i3:5', 'dropout_rate': '0.1:0.9'})
