@@ -1,6 +1,6 @@
 from tensorforce.execution import Runner
 from tensorforce.agents import DeepQNetwork
-from .environment import CustomEnvironment
+from helpers.environment import CustomEnvironment
 
 class Ezpeezy():
     """
