@@ -1,12 +1,10 @@
-print('__file__={0:<35} | __name__={1:<20} | __package__={2:<20}'.format(__file__,__name__,str(__package__)))
-
 import tensorflow as tf
 from tensorflow import keras
 from keras import backend as K
 
-from hyperparameter import HyperparameterSettings
-from data import DataManager
-from visualization import Visualizer
+from .hyperparameter import HyperparameterSettings
+from .data import DataManager
+from .visualization import Visualizer
 
 from tensorforce.environments import Environment
 
