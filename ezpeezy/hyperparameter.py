@@ -86,6 +86,9 @@ class HyperparameterSettings():
     
 		high_value = param_val[param_val.index(':') + 1:]
 		high_value = 1e4 if high_value == '' else float(high_value)
+
+		print('low_value ' + low_value)
+		print('high_value ' + high_value)
 	
 		assert low_value <= high_value, "parameter value \"{}\" is an invalid value".format(param_val)
 
