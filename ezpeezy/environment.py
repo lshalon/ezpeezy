@@ -358,6 +358,6 @@ class CustomEnvironment(Environment):
 		list
 			best parameters for given goal
 		"""
-        if self._opt == 'min':
-            return self.history.loc[self.history[self._monitor_metric].idxmin()]
-        return self.history.loc[self.history[self._monitor_metric].idxmax()] 
+		if self._opt == 'min':
+			return self.history.loc[self.history[self._monitor_metric].idxmin()]
+		return self.history.loc[self.history[self._monitor_metric].idxmax()] 
