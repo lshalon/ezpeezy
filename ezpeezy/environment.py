@@ -219,9 +219,11 @@ class CustomEnvironment(Environment):
 
 		self._prev_state = state
 
+		self.curr_episode += 1
+
 		next_state, terminal, reward = self.execute(np.zeros(self._hps.get_num_actions()))
 
-		self.curr_episode += 1
+		self.curr_train_step = 0
 
 		return next_state
 
