@@ -218,10 +218,12 @@ class CustomEnvironment(Environment):
 		state = np.array(state)
 
 		self._prev_state = state
-		self.curr_train_step = 0
+
+		next_state, terminal, reward = execute(np.zeros(self._hps.get_num_actions()))
+
 		self.curr_episode += 1
 
-		return state
+		return next_state
 
 	def _get_cached_results(self, parameters):
 		"""
@@ -307,7 +309,7 @@ class CustomEnvironment(Environment):
 
 		tol = self._starting_tol * math.pow(self._tol_decay, self.curr_train_step)
 
-		if (self.curr_train_step != 0) & (reward - self._prev_reward < tol):
+		if (self.curr_train_step <= 0) & (reward - self._prev_reward < tol):
 			print()
 			print('Terminating episode, metric did not beat tolerance of {:0.5f}'.format(tol))
 			self._prev_reward = 0.5 * reward if self._opt == 'max' else 2 * reward
@@ -317,6 +319,7 @@ class CustomEnvironment(Environment):
 
 		self.curr_train_step += 1
 		self._prev_state = next_state
+
 		return next_state, terminal, reward
 
 	def get_history(self):
