@@ -219,7 +219,7 @@ class CustomEnvironment(Environment):
 
 		self._prev_state = state
 
-		next_state, terminal, reward = execute(np.zeros(self._hps.get_num_actions()))
+		next_state, terminal, reward = self.execute(np.zeros(self._hps.get_num_actions()))
 
 		self.curr_episode += 1
 
