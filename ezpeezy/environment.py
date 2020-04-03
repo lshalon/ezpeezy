@@ -240,7 +240,7 @@ class CustomEnvironment(Environment):
 		float/None
 			returns a float if the given parameters exist in history or None if not
 		"""
-		results = self.history.copy()
+		results = self.history
 		for (key, value) in parameters.items():
 			results = results.loc[results[key] == value]
 			if len(results) == 0:
