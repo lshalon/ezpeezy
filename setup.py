@@ -21,7 +21,8 @@ setuptools.setup(
     install_requires=[
         'pandas',
         'numpy',
-        'tensorforce',
+        'tensorforce==0.5.4',
+        'tensorflow==1.13.1',
     ],
     python_requires='>=3.5',
 )
