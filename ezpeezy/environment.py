@@ -270,6 +270,8 @@ class CustomEnvironment(Environment):
 			the reward of the taken action
 		"""
 		assert 0 <= len(actions) <= self._hps.get_num_actions()
+		
+		print(f'actions: {actions}')
 
 		param_configs = self._hps.get_parameter_configs()
 		config_ranges = [config[2] - config[1] for config in param_configs]
