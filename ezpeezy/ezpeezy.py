@@ -30,7 +30,7 @@ class Ezpeezy():
         environment's reward.
     """
 
-    def __init__(self, config, model_fn, model_train_batch_size=256, 
+    def __init__(self, config, model_fn, model_type='sklearn', model_train_batch_size=256, 
                 model_train_epochs=75, exploration=0.9, 
                 exploration_decay_rate=0.8, monitor_metric='val_loss', 
                 opt='max', starting_tol=-0.01, tol_decay=0.5):
@@ -43,6 +43,9 @@ class Ezpeezy():
             ranges of the parameter space and its type
         model_fn : function
             function that returns the model you want to optimize
+        model_type : string
+            "sklearn" to signify that the passed in model_fn is of the sklearn library,
+			or "keras" to signify that the passed in model_fn is made from the keras library
         model_train_batch_size : int
             the batch size to use when training your model
         model_train_epochs : int
@@ -64,7 +67,8 @@ class Ezpeezy():
 
         self._env = CustomEnvironment(config, model_train_epoch=model_train_epochs,
                                     model_train_batch_size=model_train_batch_size, 
-                                    model_fn=model_fn, monitor_metric=monitor_metric, opt=opt, 
+                                    model_fn=model_fn, model_type=model_type, 
+                                    monitor_metric=monitor_metric, opt=opt, 
                                     starting_tol=starting_tol, tol_decay=tol_decay)
         self._agent = DeepQNetwork(states=self._env.states(), actions=self._env.actions(),
                      max_episode_timesteps=self._env.max_episode_timesteps(),
