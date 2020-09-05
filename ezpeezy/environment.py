@@ -24,8 +24,13 @@ class CustomEnvironment(Environment):
 		used to represent and manage your hyperparameter space
 	_opt : string
 		used to represent wether to maximize or minimize the monitored metric
-	_monitor_metric : string
-		defines which metric from your model to monitor
+	_model_type : string
+		either 'sklearn" to indicaate that the given model is made with the sklearn 
+		library or "keras" to indicate that the given model is made with the keras
+		library
+	_monitor_metric : string or functionn
+		defines which metric from your model to monitor if model_type == 'keras' else
+		defines the function of the metric to test on models' validation data
 	_prev_reward : float
 		the reward of the agent at the last training step
 	_starting_tol : int/float
@@ -80,8 +85,8 @@ class CustomEnvironment(Environment):
 		Returns the best parameters in history for the specified optimization target.  
 	"""
 	
-	def __init__(self, config, starting_tol, tol_decay, model_fn, monitor_metric, opt, 
-				 model_train_batch_size, model_train_epoch):
+	def __init__(self, config, starting_tol, tol_decay, model_fn, model_type, 
+					monitor_metric, opt, model_train_batch_size, model_train_epoch):
 		"""
 		Parameters
 		----------
@@ -96,8 +101,12 @@ class CustomEnvironment(Environment):
 			at each training step in the episode, decrease the tolerance by this value
 		model_fn : function
 			function that returns the model you want to optimize
-		monitor_metric : string
-			defines which metric from your model to monitor
+		model_type: string
+			"sklearn" to signify that the passed in model_fn is of the sklearn library,
+			or "keras" to signify that the passed in model_fn is made from the keras library
+		monitor_metric : string or function
+      the metric you would like to optimize in your model - string in the case of
+      model_type == 'keras', function if model_type == 'sklearn'
 		opt : string
 			used to represent wether to maximize or minimize the monitored metric
 		model_train_batch_size : int
@@ -111,11 +120,14 @@ class CustomEnvironment(Environment):
 		assert isinstance(tol_decay, float), "parameter \"{}\" must be a float".format(tol_decay)
 		assert isinstance(model_train_batch_size, int), "parameter \"{}\" must be an int".format(model_train_batch_size)
 		assert isinstance(model_train_epoch, int), "parameter \"{}\" must be an int".format(model_train_epoch)
+		assert isinstance(model_type, str) & ((model_type == 'keras') | (model_type == 'sklearn')), \
+								"model_type must be a string"
 
 		self._hps = HyperparameterSettings(config)
 		self._opt = opt # add constraint on input of this
 		self._monitor_metric = monitor_metric
 		self._prev_reward = 0. # should be more dynamic
+		self._model_type = model_type
 
 		self._starting_tol = starting_tol
 		self._tol_decay = tol_decay
@@ -290,14 +302,19 @@ class CustomEnvironment(Environment):
 			each_metric.append(cached_results)
 		else:
 			for X_train, y_train, X_valid, y_valid in self._data_manager.feed_forward_data(self.X_train, self.y_train, self.X_test, self.y_test):
-				history = self._internal_model.fit(X_train, y_train,
+			
+				if self._model_type == 'keras':
+					history = self._internal_model.fit(X_train, y_train,
 							batch_size=self._model_train_batch_size,
 							epochs=self._model_train_epoch,
 							verbose=0,
 							validation_data=(X_valid, y_valid))
-			
-			each_metric.append(min(history.history[self._monitor_metric]) if self._opt == 'min' else max(history.history[self._monitor_metric]))
-		
+
+					each_metric.append(min(history.history[self._monitor_metric]) if self._opt == 'min' else max(history.history[self._monitor_metric]))
+				elif self._model_type == 'sklearn':
+					fitted_model = self._internal_model.fit(X_train, y_train)
+					each_metric.append(self._monitor_metric(y_valid, fitted_model.predict(X_valid)))
+
 		average_metric = sum(each_metric) / len(each_metric)
 		reward = average_metric if self._opt == 'max' else -average_metric
 	
