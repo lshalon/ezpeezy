@@ -312,8 +312,13 @@ class CustomEnvironment(Environment):
 
 					each_metric.append(min(history.history[self._monitor_metric]) if self._opt == 'min' else max(history.history[self._monitor_metric]))
 				elif self._model_type == 'sklearn':
+
 					fitted_model = self._internal_model.fit(X_train, y_train)
-					each_metric.append(self._monitor_metric(y_valid, fitted_model.predict(X_valid)))
+
+					if type(self._monitor_metric) == type(None):
+						each_metric.append(fitted_model.score(X_valid, y_valid))
+					else:
+						each_metric.append(self._monitor_metric(y_valid, fitted_model.predict(X_valid)))
 
 		average_metric = sum(each_metric) / len(each_metric)
 		reward = average_metric if self._opt == 'max' else -average_metric
