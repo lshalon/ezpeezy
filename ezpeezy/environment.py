@@ -106,7 +106,8 @@ class CustomEnvironment(Environment):
 			or "keras" to signify that the passed in model_fn is made from the keras library
 		monitor_metric : string or function
       the metric you would like to optimize in your model - string in the case of
-      model_type == 'keras', function if model_type == 'sklearn'
+      model_type == 'keras', function if model_type == 'sklearn' or None if to use
+      the .score(X, y) function of the sklearn clasasifier
 		opt : string
 			used to represent wether to maximize or minimize the monitored metric
 		model_train_batch_size : int
@@ -310,8 +311,13 @@ class CustomEnvironment(Environment):
 
 					each_metric.append(min(history.history[self._monitor_metric]) if self._opt == 'min' else max(history.history[self._monitor_metric]))
 				elif self._model_type == 'sklearn':
+					
 					fitted_model = self._internal_model.fit(X_train, y_train)
-					each_metric.append(self._monitor_metric(y_valid, fitted_model.predict(X_valid)))
+
+					if type(self._monitor_metric) == type(None):
+						each_metric.append(fitted_model.score(X_valid, y_valid))
+					else:
+						each_metric.append(self._monitor_metric(y_valid, fitted_model.predict(X_valid)))
 
 		average_metric = sum(each_metric) / len(each_metric)
 		reward = average_metric if self._opt == 'max' else -average_metric
