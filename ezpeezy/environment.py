@@ -290,6 +290,11 @@ class CustomEnvironment(Environment):
 		
 		delta = np.array([actions[i] * config_ranges[i] for i in range(len(config_ranges))])
 		
+		# handling nan values
+		for i, d in enumerate(delta):
+			if d == float(np.nan):
+				delta[i] = 0
+
 		next_state = self._prev_state[:-1] + delta
 		parameters = self._hps.get_feature_dictionary(next_state)
 
@@ -325,9 +330,10 @@ class CustomEnvironment(Environment):
 	
 		self.history.loc[len(self.history)] = [self.curr_episode] + list(parameters.values()) + [average_metric]
 		
+		monitor_metric = 'accuracy' if type(self._monitor_metric) == type(None) else self._monitor_metric
 		print()
 		print('Model with {} achieves {} of {:.5f}'.format([(k, '{:0.2f}'.format(parameters[k])) for k in parameters.keys()], 
-																												self._monitor_metric, average_metric))
+																												monitor_metric, average_metric))
 
 		terminal = False
 		next_state = np.array(list(parameters.values()))
