@@ -289,16 +289,11 @@ class CustomEnvironment(Environment):
 		config_ranges = [config[2] - config[1] for config in param_configs]
 		
 		delta = np.array([actions[i] * config_ranges[i] for i in range(len(config_ranges))])
-		
-		# handling nan values
-		for i, d in enumerate(delta):
-			if d == float(np.nan):
-				delta[i] = 0
 
 		next_state = self._prev_state[:-1] + delta
 		parameters = self._hps.get_feature_dictionary(next_state)
 
-		print(f'parameters: {parameters}')
+		print(f'all history: {len(self.history)}')
 
 		self._internal_model = self.build_model(parameters)
 		

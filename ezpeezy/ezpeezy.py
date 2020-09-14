@@ -54,8 +54,12 @@ class Ezpeezy():
             the agent's exploration value
         exploration_decay_rate : float
             the agent's exploration value's decay rate (uses exponential decay)
-        monitor_metric : string
-            the metric you would like to optimize in your model
+        monitor_metric : None or string or function
+            the metric you would like to optimize in your model - string in the case of
+            model_type == 'keras', function if model_type == 'sklearn' or None if to use
+            the .score(X, y) function of the sklearn clasasifier
+
+            if function, defined to take in y_true, y_pred and return numeric type
         opt : string
             the optimization direction of the given monitor_metric
         starting_tol : int/float
@@ -74,9 +78,10 @@ class Ezpeezy():
                      max_episode_timesteps=self._env.max_episode_timesteps(),
                      memory=60, batch_size=1, 
                      exploration=dict(type='decaying', unit='timesteps', decay='exponential',
-                                      initial_value=exploration, decay_steps=100, decay_rate=exploration_decay_rate),
+                                      initial_value=exploration, decay_steps=100000, decay_rate=exploration_decay_rate),
                      discount=dict(type='decaying', unit='timesteps', decay='exponential',
-                                   initial_value=0.7, decay_steps=1000, decay_rate=0.5)
+                                   initial_value=0.7, decay_steps=100000, decay_rate=0.5),
+                     learning_rate=3e-5
                      )
 
         self.runner = Runner(agent=self._agent, environment=self._env)
