@@ -114,7 +114,7 @@ class HyperparameterSettings():
 				return parameter_tuple[2] if parameter_tuple[0] == 'float' else int(round(parameter_tuple[2]))
 			return proposed_value if parameter_tuple[0] == 'float' else int(round(proposed_value))
 		except:
-			return parameter_tuple[1]
+			return parameter_tuple[1] if parameter_tuple[0] == 'float' else int(parameter_tuple[1])
 
 	def get_parameter_configs(self):
 		"""
