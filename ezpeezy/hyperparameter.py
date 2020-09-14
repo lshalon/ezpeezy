@@ -107,11 +107,14 @@ class HyperparameterSettings():
 		float/int
 			value that is in the hyperparameter space for the specified hyperparameter
 		"""
-		if proposed_value <= parameter_tuple[1]:
-			return parameter_tuple[1] if parameter_tuple[0] == 'float' else int(round(parameter_tuple[1])) 
-		if proposed_value >= parameter_tuple[2]:
-			return parameter_tuple[2] if parameter_tuple[0] == 'float' else int(round(parameter_tuple[2]))
-		return proposed_value if parameter_tuple[0] == 'float' else int(round(proposed_value))
+		try:
+			if proposed_value <= parameter_tuple[1]:
+				return parameter_tuple[1] if parameter_tuple[0] == 'float' else int(round(parameter_tuple[1])) 
+			if proposed_value >= parameter_tuple[2]:
+				return parameter_tuple[2] if parameter_tuple[0] == 'float' else int(round(parameter_tuple[2]))
+			return proposed_value if parameter_tuple[0] == 'float' else int(round(proposed_value))
+		except:
+			return parameter_tuple[1]
 
 	def get_parameter_configs(self):
 		"""
@@ -174,5 +177,3 @@ class HyperparameterSettings():
 		"""
 		random_state = [random.uniform(param[1], param[2]) for param in self.parameter_configs]
 		return self.get_feature_dictionary(random_state)
-
-test = HyperparameterSettings({'kern_size': 'i3:5', 'dropout_rate': '0.1:0.9'})
