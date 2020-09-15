@@ -76,12 +76,12 @@ class Ezpeezy():
                                     starting_tol=starting_tol, tol_decay=tol_decay)
         self._agent = DeepQNetwork(states=self._env.states(), actions=self._env.actions(),
                      max_episode_timesteps=self._env.max_episode_timesteps(),
-                     memory=60, batch_size=1,
+                     memory=60, batch_size=3,
                      exploration=dict(type='decaying', unit='timesteps', decay='exponential',
                                       initial_value=exploration, decay_steps=100000, decay_rate=exploration_decay_rate),
                      discount=dict(type='decaying', unit='timesteps', decay='exponential',
                                    initial_value=0.7, decay_steps=100000, decay_rate=0.5),
-                     learning_rate=3e-5, l2_regularization=1e-3
+                     learning_rate=1e-5, l2_regularization=1e-3
                      )
 
         self.runner = Runner(agent=self._agent, environment=self._env)
