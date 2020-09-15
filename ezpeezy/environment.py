@@ -173,7 +173,7 @@ class CustomEnvironment(Environment):
 		int
 			static integer representing maximum timesteps per episode
 		"""
-		return 50
+		return 15
 
 	def set_k_folds(self, n_folds, pick_random):
 		"""
