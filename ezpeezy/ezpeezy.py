@@ -33,7 +33,7 @@ class Ezpeezy():
     def __init__(self, config, model_fn, model_type='sklearn', model_train_batch_size=256, 
                 model_train_epochs=75, exploration=0.9, 
                 exploration_decay_rate=0.8, monitor_metric='val_loss', 
-                opt='max', starting_tol=-0.01, tol_decay=0.5):
+                opt='max', starting_tol=-0.01, tol_decay=0.5, deepqn_lr=1e-15):
         """
         Parameters
         ----------
@@ -67,6 +67,8 @@ class Ezpeezy():
             training step, or else end the agent's episode
         tol_decay : int/float
             at each training step in the episode, decrease the tolerance by this value
+        deepqn_lr : float
+            learning rate to use for the DQN
         """
 
         self._env = CustomEnvironment(config, model_train_epoch=model_train_epochs,
@@ -81,7 +83,7 @@ class Ezpeezy():
                                       initial_value=exploration, decay_steps=100000, decay_rate=exploration_decay_rate),
                      discount=dict(type='decaying', unit='timesteps', decay='exponential',
                                    initial_value=0.7, decay_steps=100000, decay_rate=0.5),
-                     learning_rate=1e-20
+                     learning_rate=deepqn_lr
                      )
 
         self.runner = Runner(agent=self._agent, environment=self._env)
