@@ -352,6 +352,7 @@ class CustomEnvironment(Environment):
 		self.curr_train_step += 1
 		self._prev_state = next_state
 
+		print(f'{next_state}, {terminal}, {reward}')
 		return next_state, terminal, reward
 
 	def get_history(self):
