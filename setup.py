@@ -22,7 +22,7 @@ setuptools.setup(
         'pandas',
         'numpy',
         'tensorforce==0.5.4',
-        'tensorflow==2.2.0',
+        'tensorflow==2.9.3',
     ],
     python_requires='>=3.5',
 )
